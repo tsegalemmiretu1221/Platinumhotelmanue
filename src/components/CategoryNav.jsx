@@ -11,11 +11,11 @@ const CategoryNav = ({ categories, activeCategory, onCategoryClick, language, se
     const [showScrollHint, setShowScrollHint] = useState(false);
 
     const languages = [
-        { code: 'en', displayCode: 'EN', label: 'English', flagUrl: 'https://flagcdn.com/w80/gb.png' },
-        { code: 'am', displayCode: 'ET', label: 'አማርኛ', flagUrl: 'https://flagcdn.com/w80/et.png' },
-        { code: 'zh', displayCode: 'CN', label: '中文', flagUrl: 'https://flagcdn.com/w80/cn.png' },
-        { code: 'ar', displayCode: 'AE', label: 'العربية', flagUrl: 'https://flagcdn.com/w80/ae.png' },
-        { code: 'fr', displayCode: 'FR', label: 'Français', flagUrl: 'https://flagcdn.com/w80/fr.png' }
+        { code: 'en', displayCode: 'EN', label: 'English', flagUrl: '/images/flags/gb.png' },
+        { code: 'am', displayCode: 'ET', label: 'አማርኛ', flagUrl: '/images/flags/et.png' },
+        { code: 'zh', displayCode: 'CN', label: '中文', flagUrl: '/images/flags/cn.png' },
+        { code: 'ar', displayCode: 'AE', label: 'العربية', flagUrl: '/images/flags/ae.png' },
+        { code: 'fr', displayCode: 'FR', label: 'Français', flagUrl: '/images/flags/fr.png' }
     ];
 
     const currentLang = languages.find(l => l.code === language) || languages[0];
