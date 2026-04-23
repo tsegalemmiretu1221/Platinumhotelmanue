@@ -126,7 +126,7 @@ const CategoryNav = ({ categories, activeCategory, onCategoryClick, language, se
                     >
                         <div className="w-6 h-4.5 overflow-hidden rounded-sm shadow-sm ring-1 ring-white/20">
                             <img 
-                                src={currentLang.flagUrl ? `${import.meta.env.BASE_URL}${currentLang.flagUrl.startsWith('/') ? currentLang.flagUrl.slice(1) : currentLang.flagUrl}` : ''}
+                                src={currentLang.flagUrl ? (currentLang.flagUrl.startsWith('http') ? currentLang.flagUrl : `${import.meta.env.BASE_URL}${currentLang.flagUrl.startsWith('/') ? currentLang.flagUrl.slice(1) : currentLang.flagUrl}`) : ''}
                                 alt={currentLang.label}
                                 className="w-full h-full object-cover"
                             />
@@ -165,7 +165,7 @@ const CategoryNav = ({ categories, activeCategory, onCategoryClick, language, se
                                             <div className="flex items-center gap-3.5">
                                                 <div className="w-8 h-6 overflow-hidden rounded-md shadow-sm ring-1 ring-black/5">
                                                     <img 
-                                                        src={lang.flagUrl ? `${import.meta.env.BASE_URL}${lang.flagUrl.startsWith('/') ? lang.flagUrl.slice(1) : lang.flagUrl}` : ''}
+                                                        src={lang.flagUrl ? (lang.flagUrl.startsWith('http') ? lang.flagUrl : `${import.meta.env.BASE_URL}${lang.flagUrl.startsWith('/') ? lang.flagUrl.slice(1) : lang.flagUrl}`) : ''}
                                                         alt={lang.label}
                                                         className="w-full h-full object-cover"
                                                     />
