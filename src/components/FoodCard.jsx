@@ -52,7 +52,7 @@ const FoodCard = memo(({ item, onClick, onAddToCart, language, menuType }) => {
             {item.image && (
                 <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-hotel-light">
                     <img
-                        src={item.image}
+                        src={item.image ? `${import.meta.env.BASE_URL}${item.image.startsWith('/') ? item.image.slice(1) : item.image}` : ''}
                         alt={itemName}
                         className="w-full h-full object-cover"
                     />

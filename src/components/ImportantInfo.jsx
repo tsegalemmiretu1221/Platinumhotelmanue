@@ -31,7 +31,7 @@ const ImportantInfo = ({ language }) => {
                 <div>
                     <div className="mb-4 flex justify-center">
                         <img
-                            src="/images/alacarte_header.png"
+                            src={`${import.meta.env.BASE_URL}images/alacarte_header.png`}
                             alt="Alacarte Menu"
                             className="h-28 w-auto object-contain mix-blend-multiply"
                         />

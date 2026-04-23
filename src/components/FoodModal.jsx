@@ -87,7 +87,7 @@ const FoodModal = ({ item, onClose, language }) => {
                     {item.image && (
                         <div className="w-full aspect-square overflow-hidden bg-hotel-light">
                             <img
-                                src={item.image}
+                                src={item.image ? `${import.meta.env.BASE_URL}${item.image.startsWith('/') ? item.image.slice(1) : item.image}` : ''}
                                 alt={itemName}
                                 className="w-full h-full object-cover"
                             />
