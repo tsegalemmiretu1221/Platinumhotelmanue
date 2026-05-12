@@ -119,6 +119,13 @@ const Footer = ({ language }) => {
                     <p className="text-[9px] font-black uppercase tracking-[0.2em] text-white/30">
                         &copy; {new Date().getFullYear()} PLATINUM Hotel
                     </p>
+                    <a
+                        href="#/admin"
+                        className="inline-block mt-4 text-[9px] font-semibold uppercase tracking-[0.2em] text-white/20 hover:text-white/50 transition-colors duration-300"
+                        style={{ letterSpacing: '0.15em' }}
+                    >
+                        ⚙ Staff Admin
+                    </a>
                 </div>
             </div>
         </footer>
