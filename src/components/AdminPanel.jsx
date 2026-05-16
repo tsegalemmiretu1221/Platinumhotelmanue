@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { loadMenuData, saveMenuData, resetMenuData, adminLogout, changeAdminPassword, autoTranslate } from '../services/menuService';
+import { loadMenuData, saveMenuData, resetMenuData, adminLogout, changeAdminPassword, autoTranslate, API_BASE } from '../services/menuService';
 import { foodData as defaultFood, drinksData as defaultDrinks, cocktailData as defaultCocktails } from '../data/menuData';
 
 const MENU_TYPES = [
@@ -25,23 +25,31 @@ export default function AdminPanel({ onLogout }) {
   const [addingItem, setAddingItem] = useState(null);   // { catIdx, data }
   const [addingCategory, setAddingCategory] = useState(false);
   const [editingCategory, setEditingCategory] = useState(null); // { catIdx, data }
-  const [newCategory, setNewCategory] = useState({ id:'', title:'', subtitle:'', title_am:'', title_fr:'', title_zh:'', title_ar:'', subtitle_am:'', subtitle_fr:'', subtitle_zh:'', subtitle_ar:'', headerImage:'' });
+  const [newCategory, setNewCategory] = useState({ id: '', title: '', subtitle: '', title_am: '', title_fr: '', title_zh: '', title_ar: '', subtitle_am: '', subtitle_fr: '', subtitle_zh: '', subtitle_ar: '', headerImage: '' });
   const [saved, setSaved] = useState(false);
   const [search, setSearch] = useState('');
   const [showPassModal, setShowPassModal] = useState(false);
 
   useEffect(() => {
-    setMenuData(loadMenuData());
+    const fetch = async () => {
+      const data = await loadMenuData();
+      setMenuData(data);
+    };
+    fetch();
   }, []);
 
   const currentCategories = menuData[activeMenu] || [];
 
-  function save(data) {
+  async function save(data) {
     const next = { ...menuData, ...data };
     setMenuData(next);
-    saveMenuData(next.foodData, next.drinksData, next.cocktailData);
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2000);
+    const ok = await saveMenuData(next.foodData, next.drinksData, next.cocktailData);
+    if (ok) {
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } else {
+      alert('Failed to save to server. Check if the server is running.');
+    }
   }
 
   function handlePriceChange(catIdx, itemIdx, val) {
@@ -119,7 +127,7 @@ export default function AdminPanel({ onLogout }) {
     save({ [activeMenu]: cats });
     setActiveCategory(cats.length - 1);
     setAddingCategory(false);
-    setNewCategory({ id:'', title:'', subtitle:'', title_am:'', title_fr:'', title_zh:'', title_ar:'', subtitle_am:'', subtitle_fr:'', subtitle_zh:'', subtitle_ar:'', headerImage:'' });
+    setNewCategory({ id: '', title: '', subtitle: '', title_am: '', title_fr: '', title_zh: '', title_ar: '', subtitle_am: '', subtitle_fr: '', subtitle_zh: '', subtitle_ar: '', headerImage: '' });
   }
 
   function handleReset() {
@@ -221,7 +229,9 @@ export default function AdminPanel({ onLogout }) {
                             <button onClick={() => deleteItem(ci, ii)} style={{ background: '#7f1d1d', color: '#fca5a5', border: 'none', borderRadius: 6, padding: '4px 9px', cursor: 'pointer', fontSize: 12 }}>✕</button>
                           </div>
                         </div>
-                        <p style={{ color: '#64748b', fontSize: 12, margin: '0 0 10px', lineHeight: 1.4 }}>{item.description}</p>
+                        <p style={{ color: '#64748b', fontSize: 12, margin: '0 0 10px', lineHeight: 1.4 }}>
+                          {item.description?.length > 80 ? item.description.substring(0, 80) + '...' : item.description}
+                        </p>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                           <span style={{ color: '#94a3b8', fontSize: 13 }}>ETB</span>
                           <input
@@ -276,46 +286,46 @@ export default function AdminPanel({ onLogout }) {
 }
 
 function PasswordModal({ onClose }) {
-  const [cur, setCur]   = React.useState('');
-  const [nw, setNw]     = React.useState('');
+  const [cur, setCur] = React.useState('');
+  const [nw, setNw] = React.useState('');
   const [conf, setConf] = React.useState('');
-  const [msg, setMsg]   = React.useState(null);
-  const inputStyle = { width:'100%', background:'#0f172a', border:'1px solid #334155', color:'#f1f5f9', borderRadius:8, padding:'10px 12px', fontSize:14, boxSizing:'border-box', outline:'none', marginTop:6 };
+  const [msg, setMsg] = React.useState(null);
+  const inputStyle = { width: '100%', background: '#0f172a', border: '1px solid #334155', color: '#f1f5f9', borderRadius: 8, padding: '10px 12px', fontSize: 14, boxSizing: 'border-box', outline: 'none', marginTop: 6 };
   function handleSubmit(e) {
     e.preventDefault();
-    if (nw !== conf) return setMsg({ ok:false, text:'New passwords do not match.' });
+    if (nw !== conf) return setMsg({ ok: false, text: 'New passwords do not match.' });
     const r = changeAdminPassword(cur, nw);
-    setMsg({ ok:r.ok, text:r.msg });
+    setMsg({ ok: r.ok, text: r.msg });
     if (r.ok) { setCur(''); setNw(''); setConf(''); }
   }
   return (
-    <div style={{ position:'fixed', inset:0, background:'#000a', zIndex:2000, display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
-      <div style={{ background:'#1e293b', border:'1px solid #334155', borderRadius:16, width:'100%', maxWidth:420, padding:28, boxShadow:'0 20px 60px #000c' }}>
-        <div style={{ display:'flex', justifyContent:'space-between', marginBottom:20 }}>
-          <h3 style={{ margin:0, color:'#F59E0B', fontSize:18, fontWeight:800 }}>🔐 Change Password</h3>
-          <button onClick={onClose} style={{ background:'none', border:'none', color:'#94a3b8', fontSize:22, cursor:'pointer' }}>✕</button>
+    <div style={{ position: 'fixed', inset: 0, background: '#000a', zIndex: 2000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+      <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 16, width: '100%', maxWidth: 420, padding: 28, boxShadow: '0 20px 60px #000c' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 20 }}>
+          <h3 style={{ margin: 0, color: '#F59E0B', fontSize: 18, fontWeight: 800 }}>🔐 Change Password</h3>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#94a3b8', fontSize: 22, cursor: 'pointer' }}>✕</button>
         </div>
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom:12 }}>
-            <label style={{ color:'#94a3b8', fontSize:12, fontWeight:700, letterSpacing:1 }}>CURRENT PASSWORD</label>
+          <div style={{ marginBottom: 12 }}>
+            <label style={{ color: '#94a3b8', fontSize: 12, fontWeight: 700, letterSpacing: 1 }}>CURRENT PASSWORD</label>
             <input type="password" style={inputStyle} value={cur} onChange={e => setCur(e.target.value)} required />
           </div>
-          <div style={{ marginBottom:12 }}>
-            <label style={{ color:'#94a3b8', fontSize:12, fontWeight:700, letterSpacing:1 }}>NEW PASSWORD (min 6 chars)</label>
+          <div style={{ marginBottom: 12 }}>
+            <label style={{ color: '#94a3b8', fontSize: 12, fontWeight: 700, letterSpacing: 1 }}>NEW PASSWORD (min 6 chars)</label>
             <input type="password" style={inputStyle} value={nw} onChange={e => setNw(e.target.value)} required />
           </div>
-          <div style={{ marginBottom:16 }}>
-            <label style={{ color:'#94a3b8', fontSize:12, fontWeight:700, letterSpacing:1 }}>CONFIRM NEW PASSWORD</label>
+          <div style={{ marginBottom: 16 }}>
+            <label style={{ color: '#94a3b8', fontSize: 12, fontWeight: 700, letterSpacing: 1 }}>CONFIRM NEW PASSWORD</label>
             <input type="password" style={inputStyle} value={conf} onChange={e => setConf(e.target.value)} required />
           </div>
           {msg && (
-            <div style={{ padding:'10px 14px', borderRadius:8, background:msg.ok?'#14532d':'#450a0a', border:`1px solid ${msg.ok?'#16a34a':'#7f1d1d'}`, color:msg.ok?'#86efac':'#fca5a5', fontSize:13, marginBottom:16 }}>
+            <div style={{ padding: '10px 14px', borderRadius: 8, background: msg.ok ? '#14532d' : '#450a0a', border: `1px solid ${msg.ok ? '#16a34a' : '#7f1d1d'}`, color: msg.ok ? '#86efac' : '#fca5a5', fontSize: 13, marginBottom: 16 }}>
               {msg.ok ? '✅' : '⚠️'} {msg.text}
             </div>
           )}
-          <div style={{ display:'flex', gap:10, justifyContent:'flex-end' }}>
-            <button type="button" onClick={onClose} style={{ background:'#334155', color:'#94a3b8', border:'none', borderRadius:8, padding:'10px 20px', cursor:'pointer', fontSize:13, fontWeight:700 }}>Cancel</button>
-            <button type="submit" style={{ background:'linear-gradient(90deg,#084C55,#0e7490)', color:'#F59E0B', border:'none', borderRadius:8, padding:'10px 22px', cursor:'pointer', fontSize:13, fontWeight:700 }}>🔒 Update</button>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+            <button type="button" onClick={onClose} style={{ background: '#334155', color: '#94a3b8', border: 'none', borderRadius: 8, padding: '10px 20px', cursor: 'pointer', fontSize: 13, fontWeight: 700 }}>Cancel</button>
+            <button type="submit" style={{ background: 'linear-gradient(90deg,#084C55,#0e7490)', color: '#F59E0B', border: 'none', borderRadius: 8, padding: '10px 22px', cursor: 'pointer', fontSize: 13, fontWeight: 700 }}>🔒 Update</button>
           </div>
         </form>
       </div>
@@ -329,21 +339,36 @@ const taStyle = { ...inputStyle, resize: 'vertical', minHeight: 70, fontFamily: 
 
 function ImagePickerField({ value, onChange, placeholder }) {
   const ref = React.useRef();
-  const [previewUrl, setPreviewUrl] = React.useState(null);
+  const [uploading, setUploading] = React.useState(false);
 
-  function handleFile(e) {
+  async function handleFile(e) {
     const file = e.target.files[0];
     if (!file) return;
-    // Set the path value for saving
-    onChange(`images/${file.name}`);
-    // Read file for instant preview
-    const reader = new FileReader();
-    reader.onload = ev => setPreviewUrl(ev.target.result);
-    reader.readAsDataURL(file);
+    
+    setUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      const res = await fetch(`${API_BASE}/upload`, {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      if (data.url) {
+        onChange(data.url);
+      } else {
+        alert('Upload failed: ' + (data.error || 'Unknown error'));
+      }
+    } catch (err) {
+      alert('Upload failed. Check your connection to the server.');
+    } finally {
+      setUploading(false);
+    }
   }
 
-  // Show FileReader preview if available, else try path-based preview
-  const displaySrc = previewUrl || (value ? `/${value.replace(/^\//, '')}` : null);
+  // Show preview
+  const displaySrc = value ? (value.startsWith('http') ? value : `/${value.replace(/^\//, '')}`) : null;
 
   return (
     <div style={{ marginTop: 6 }}>
@@ -351,12 +376,12 @@ function ImagePickerField({ value, onChange, placeholder }) {
         <input
           style={{ ...inputStyle, flex: 1 }}
           value={value}
-          onChange={e => { onChange(e.target.value); setPreviewUrl(null); }}
+          onChange={e => onChange(e.target.value)}
           placeholder={placeholder}
         />
-        <button type="button" onClick={() => ref.current.click()}
-          style={{ background: '#0e7490', color: '#fff', border: 'none', borderRadius: 8, padding: '9px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap' }}>
-          📁 Browse
+        <button type="button" onClick={() => ref.current.click()} disabled={uploading}
+          style={{ background: uploading ? '#334155' : '#0e7490', color: '#fff', border: 'none', borderRadius: 8, padding: '9px 14px', cursor: uploading ? 'not-allowed' : 'pointer', fontSize: 12, fontWeight: 700, whiteSpace: 'nowrap' }}>
+          {uploading ? '⏳ Uploading...' : '📁 Browse & Upload'}
         </button>
         <input ref={ref} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFile} />
       </div>
@@ -366,15 +391,15 @@ function ImagePickerField({ value, onChange, placeholder }) {
             style={{ width: 140, height: 80, objectFit: 'cover', borderRadius: 10, border: '2px solid #F59E0B' }}
             onError={e => { e.target.style.display = 'none'; }} />
           <div style={{ fontSize: 11, color: '#64748b' }}>
-            <div style={{ color: '#22c55e', fontWeight: 700, marginBottom: 4 }}>✅ Preview ready!</div>
-            Copy <code style={{ color: '#67e8f9' }}>{(value || '').split('/').pop()}</code> to:<br />
-            <code style={{ color: '#94a3b8', fontSize: 10 }}>public/images/</code>
+            <div style={{ color: '#22c55e', fontWeight: 700, marginBottom: 4 }}>✅ Live on server!</div>
+            Path: <code style={{ color: '#67e8f9' }}>{value}</code>
           </div>
         </div>
       )}
     </div>
   );
 }
+
 
 function Modal({ title, onClose, onSave, children }) {
   return (

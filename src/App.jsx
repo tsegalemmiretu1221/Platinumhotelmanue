@@ -14,8 +14,9 @@ import DrinkOptionModal from './components/DrinkOptionModal';
 import FloatingMenuToggle from './components/FloatingMenuToggle';
 import AdminPanel from './components/AdminPanel';
 import AdminLogin from './components/AdminLogin';
-import { loadMenuData } from './services/menuService';
-import { isAdminLoggedIn } from './services/menuService';
+import { loadMenuData, isAdminLoggedIn } from './services/menuService';
+import { socket } from './services/socket';
+import { foodData as defaultFood, drinksData as defaultDrinks, cocktailData as defaultCocktails } from './data/menuData';
 
 // ── Hash-based routing helper ──────────────────────────────────────────────
 function useHash() {
@@ -30,16 +31,46 @@ function useHash() {
 
 function App() {
   const hash = useHash();
-  const isAdminRoute = hash === '#/admin' || hash === '#/admin/';
+  const path = window.location.pathname.toLowerCase();
+  const normalizedHash = hash.toLowerCase().split('?')[0];
+  
+  // Detect admin route from either hash (#/admin) or pathname (/admin)
+  const isAdminRoute = 
+    normalizedHash === '#/admin' || 
+    normalizedHash === '#/admin/' || 
+    path.endsWith('/admin') || 
+    path.endsWith('/admin/');
   const [adminLoggedIn, setAdminLoggedIn] = useState(isAdminLoggedIn);
 
   // ── Live menu data (supports admin edits) ──────────────────────────────
-  const [liveMenu, setLiveMenu] = useState(() => loadMenuData());
+  const [liveMenu, setLiveMenu] = useState({ foodData: defaultFood, drinksData: defaultDrinks, cocktailData: defaultCocktails });
+
+  useEffect(() => {
+    const fetchMenu = async () => {
+      const data = await loadMenuData();
+      setLiveMenu(data);
+    };
+    fetchMenu();
+
+    // Listen for real-time updates
+    socket.on('menu-updated', (newData) => {
+      console.log('Menu update received via socket');
+      setLiveMenu(newData);
+    });
+
+    return () => {
+      socket.off('menu-updated');
+    };
+  }, []);
 
   // Refresh menu when navigating away from admin back to menu
   useEffect(() => {
     if (!isAdminRoute) {
-      setLiveMenu(loadMenuData());
+      const refresh = async () => {
+        const data = await loadMenuData();
+        setLiveMenu(data);
+      };
+      refresh();
     }
   }, [isAdminRoute]);
 
@@ -60,7 +91,7 @@ function App() {
 
   const currentMenuData = menuType === 'food' ? liveMenu.foodData
     : menuType === 'drinks' ? liveMenu.drinksData
-    : liveMenu.cocktailData;
+      : liveMenu.cocktailData;
 
   useEffect(() => {
     localStorage.setItem('selectedLanguage', language);

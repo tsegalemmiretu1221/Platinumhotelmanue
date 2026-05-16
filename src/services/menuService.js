@@ -9,31 +9,44 @@ const PASS_KEY    = 'platinum_admin_pass';
 const DEFAULT_PASS = 'platinum2024';
 
 // ── Menu ─────────────────────────────────────────────────────────────────────
-export function loadMenuData() {
+// Detect if we are in development mode (Vite port) or production
+const isDev = window.location.port === '5173' || window.location.port === '5174' || window.location.port === '5175';
+export const API_BASE = isDev ? `http://${window.location.hostname}:3001/api` : '/api';
+
+
+// ── Menu ─────────────────────────────────────────────────────────────────────
+export async function loadMenuData() {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const p = JSON.parse(stored);
-      return {
-        foodData:     p.foodData     || defaultFood,
-        drinksData:   p.drinksData   || defaultDrinks,
-        cocktailData: p.cocktailData || defaultCocktails,
-      };
+    const res = await fetch(`${API_BASE}/menu`);
+    if (res.ok) {
+      return await res.json();
     }
-  } catch (e) { console.error(e); }
+  } catch (e) { 
+    console.error('Failed to load from server, falling back to defaults', e); 
+  }
   return { foodData: defaultFood, drinksData: defaultDrinks, cocktailData: defaultCocktails };
 }
 
-export function saveMenuData(foodData, drinksData, cocktailData) {
+export async function saveMenuData(foodData, drinksData, cocktailData) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify({ foodData, drinksData, cocktailData }));
-    return true;
-  } catch (e) { return false; }
+    const res = await fetch(`${API_BASE}/menu`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ foodData, drinksData, cocktailData }),
+    });
+    return res.ok;
+  } catch (e) { 
+    console.error('Failed to save to server', e);
+    return false; 
+  }
 }
 
 export function resetMenuData() {
-  localStorage.removeItem(STORAGE_KEY);
+  // In a real app, this might call a reset endpoint. 
+  // For now, we'll just not use it or handle it in the UI.
+  console.warn('Reset not implemented on server yet');
 }
+
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 function getPassword() {

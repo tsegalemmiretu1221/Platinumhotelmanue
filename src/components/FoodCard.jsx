@@ -79,15 +79,10 @@ const FoodCard = memo(({ item, onClick, onAddToCart, language, menuType }) => {
                     </div>
 
                     {itemDescription && (
-                        <div className="text-[13px] leading-relaxed font-medium text-slate-600">
+                        <div className="text-[13px] leading-relaxed font-medium text-slate-600 mt-1">
                             {(() => {
-                                const words = itemDescription.split(' ');
-                                if (words.length > 10) {
-                                    return (
-                                        <>
-                                            {words.slice(0, 10).join(' ')}...
-                                        </>
-                                    );
+                                if (itemDescription.length > 60) {
+                                    return itemDescription.substring(0, 60) + '...';
                                 }
                                 return itemDescription;
                             })()}
@@ -96,19 +91,20 @@ const FoodCard = memo(({ item, onClick, onAddToCart, language, menuType }) => {
                 </div>
 
                 <div className="mt-2 flex justify-between items-end">
-                    {itemDescription && itemDescription.split(' ').length > 10 ? (
-                        <div className="text-slate-900 font-bold text-xs uppercase tracking-wide">
+                    {itemDescription && itemDescription.length > 60 ? (
+                        <div className="text-slate-900 font-medium text-[13px] uppercase">
                             {{
-                                en: "See more",
+                                en: "SEE MORE",
                                 am: "ተጨማሪ ይመልከቱ",
                                 zh: "查看更多",
                                 ar: "مشاهدة المزيد",
-                                fr: "Voir plus"
-                            }[language] || "See more"}
+                                fr: "VOIR PLUS"
+                            }[language] || "SEE MORE"}
                         </div>
                     ) : (
                         <div></div>
                     )}
+
 
                     {/* Add Button - Integrated at bottom */}
                     <motion.button

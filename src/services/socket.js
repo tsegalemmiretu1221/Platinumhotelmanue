@@ -2,7 +2,8 @@ import { io } from 'socket.io-client';
 
 // Replace with your computer's IP address (e.g., 'http://192.168.1.5:3001')
 // so that phones on the same Wi-Fi can connect.
-const SOCKET_URL = 'http://localhost:3001'; 
+const isDev = window.location.port === '5173' || window.location.port === '5174' || window.location.port === '5175';
+const SOCKET_URL = isDev ? `http://${window.location.hostname}:3001` : window.location.origin; 
 
 export const socket = io(SOCKET_URL, {
   autoConnect: true,

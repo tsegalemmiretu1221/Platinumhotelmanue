@@ -125,7 +125,7 @@ const CategoryNav = ({ categories, activeCategory, onCategoryClick, language, se
                         className="flex items-center gap-2 bg-black/40 text-white py-1.5 px-2.5 rounded-full border border-white/20 hover:bg-black/60 transition-all cursor-pointer shadow-lg active:scale-95 group"
                     >
                         <div className="w-6 h-4.5 overflow-hidden rounded-sm shadow-sm ring-1 ring-white/20">
-                            <img 
+                            <img
                                 src={currentLang.flagUrl ? (currentLang.flagUrl.startsWith('http') ? currentLang.flagUrl : `${import.meta.env.BASE_URL}${currentLang.flagUrl.startsWith('/') ? currentLang.flagUrl.slice(1) : currentLang.flagUrl}`) : ''}
                                 alt={currentLang.label}
                                 className="w-full h-full object-cover"
@@ -164,7 +164,7 @@ const CategoryNav = ({ categories, activeCategory, onCategoryClick, language, se
                                         >
                                             <div className="flex items-center gap-3.5">
                                                 <div className="w-8 h-6 overflow-hidden rounded-md shadow-sm ring-1 ring-black/5">
-                                                    <img 
+                                                    <img
                                                         src={lang.flagUrl ? (lang.flagUrl.startsWith('http') ? lang.flagUrl : `${import.meta.env.BASE_URL}${lang.flagUrl.startsWith('/') ? lang.flagUrl.slice(1) : lang.flagUrl}`) : ''}
                                                         alt={lang.label}
                                                         className="w-full h-full object-cover"
@@ -183,106 +183,106 @@ const CategoryNav = ({ categories, activeCategory, onCategoryClick, language, se
             </div>
 
             <div className="relative pt-4 pb-0">
-                    <>
-                        {/* Left scroll indicator */}
-                        <AnimatePresence>
-                            {showLeftIndicator && (
-                                <motion.div
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -10 }}
-                                    className="absolute left-0 top-6 bottom-4 w-12 bg-gradient-to-r from-white to-transparent z-10 flex items-center justify-start pl-1 pointer-events-none"
-                                >
-                                    <ChevronLeft size={20} className="text-[#F59E0B]" />
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                <>
+                    {/* Left scroll indicator */}
+                    <AnimatePresence>
+                        {showLeftIndicator && (
+                            <motion.div
+                                initial={{ opacity: 0, x: -10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: -10 }}
+                                className="absolute left-0 top-6 bottom-4 w-12 bg-gradient-to-r from-white to-transparent z-10 flex items-center justify-start pl-1 pointer-events-none"
+                            >
+                                <ChevronLeft size={20} className="text-[#F59E0B]" />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
-                        {/* Right scroll indicator */}
-                        <AnimatePresence>
-                            {showRightIndicator && (
-                                <motion.div
-                                    initial={{ opacity: 0, x: 10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: 10 }}
-                                    className="absolute right-0 top-6 bottom-4 w-12 bg-gradient-to-l from-white to-transparent z-10 flex items-center justify-end pr-1 pointer-events-none"
-                                >
-                                    <ChevronRight size={20} className="text-[#F59E0B]" />
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                    {/* Right scroll indicator */}
+                    <AnimatePresence>
+                        {showRightIndicator && (
+                            <motion.div
+                                initial={{ opacity: 0, x: 10 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                exit={{ opacity: 0, x: 10 }}
+                                className="absolute right-0 top-6 bottom-4 w-12 bg-gradient-to-l from-white to-transparent z-10 flex items-center justify-end pr-1 pointer-events-none"
+                            >
+                                <ChevronRight size={20} className="text-[#F59E0B]" />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
-                        {/* Scroll hint text */}
-                        <AnimatePresence>
-                            {showScrollHint && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -10 }}
-                                    transition={{ duration: 0.3 }}
-                                    style={{
-                                        backgroundColor: '#2D5A27',
-                                        color: '#ffffff',
-                                        zIndex: 100
-                                    }}
-                                    className="absolute top-2 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full shadow-lg whitespace-nowrap uppercase font-bold text-[10px] tracking-widest text-center pointer-events-none"
-                                >
-                                    ← Swipe for more →
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                    {/* Scroll hint text */}
+                    <AnimatePresence>
+                        {showScrollHint && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.3 }}
+                                style={{
+                                    backgroundColor: '#2D5A27',
+                                    color: '#ffffff',
+                                    zIndex: 100
+                                }}
+                                className="absolute top-2 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full shadow-lg whitespace-nowrap uppercase font-bold text-[10px] tracking-widest text-center pointer-events-none"
+                            >
+                                ← Swipe for more →
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
-                        <div
-                            ref={scrollRef}
-                            className={`flex overflow-x-auto no-scrollbar px-6 space-x-4 scroll-smooth relative z-20 ${categories.length === 1 ? 'justify-center' : ''}`}
-                        >
-                            {categories.map((category) => (
-                                <button
-                                    key={category.id}
-                                    ref={(el) => (buttonRefs.current[category.id] = el)}
-                                    onClick={() => onCategoryClick(category.id)}
-                                    className={`
+                    <div
+                        ref={scrollRef}
+                        className={`flex overflow-x-auto no-scrollbar px-6 space-x-4 scroll-smooth relative z-20 ${categories.length === 1 ? 'justify-center' : ''}`}
+                    >
+                        {categories.map((category) => (
+                            <button
+                                key={category.id}
+                                ref={(el) => (buttonRefs.current[category.id] = el)}
+                                onClick={() => onCategoryClick(category.id)}
+                                className={`
                                             flex-shrink-0 w-28 flex flex-col items-center gap-2 pb-2 transition-all duration-300
                                             ${activeCategory === category.id
-                                            ? 'opacity-100'
-                                            : 'opacity-80'
-                                        }
+                                        ? 'opacity-100'
+                                        : 'opacity-80'
+                                    }
                                         `}
-                                >
-                                    <div className={`
+                            >
+                                <div className={`
                                             w-24 h-24 rounded-[2.2rem] overflow-hidden transition-all duration-500 p-1.5
                                             ${activeCategory === category.id
-                                            ? 'shadow-[0_15px_30px_-8px_rgba(0,0,0,0.1)] scale-110 -translate-y-2'
-                                            : 'bg-white shadow-sm opacity-90'
-                                        }
+                                        ? 'shadow-[0_15px_30px_-8px_rgba(0,0,0,0.1)] scale-110 -translate-y-2'
+                                        : 'bg-white shadow-sm opacity-90'
+                                    }
                                         `}>
-                                        <div className="w-full h-full rounded-[1.8rem] overflow-hidden bg-gray-100">
-                                            <img
-                                                src={(() => {
-                                                    const img = category.navImage || category.headerImage || category.items?.[0]?.image || '/images/default_category.jpg';
-                                                    return `${import.meta.env.BASE_URL}${img.startsWith('/') ? img.slice(1) : img}`;
-                                                })()}
-                                                alt={category.title}
-                                                className="w-full h-full object-cover"
-                                            />
-                                        </div>
+                                    <div className="w-full h-full rounded-[1.8rem] overflow-hidden bg-gray-100">
+                                        <img
+                                            src={(() => {
+                                                const img = category.navImage || category.headerImage || category.items?.[0]?.image || '/images/default_category.jpg';
+                                                return `${import.meta.env.BASE_URL}${img.startsWith('/') ? img.slice(1) : img}`;
+                                            })()}
+                                            alt={category.title}
+                                            className="w-full h-full object-cover"
+                                        />
                                     </div>
-                                    <span className={`
+                                </div>
+                                <span className={`
                                             text-[11px] font-extrabold text-center leading-tight transition-colors duration-300 px-1 uppercase tracking-tight
                                             ${activeCategory === category.id
-                                            ? 'text-[#F59E0B] font-black'
-                                            : 'text-hotel-dark'
-                                        }
+                                        ? 'text-[#F59E0B] font-black'
+                                        : 'text-hotel-dark'
+                                    }
                                 `}>
-                                        {(() => {
-                                            const langField = `title_${language}`;
-                                            return (category[langField]) ? category[langField] : category.title;
-                                        })()}
-                                    </span>
-                                </button>
-                            ))}
-                        </div>
-                    </>
+                                    {(() => {
+                                        const langField = `title_${language}`;
+                                        return (category[langField]) ? category[langField] : category.title;
+                                    })()}
+                                </span>
+                            </button>
+                        ))}
+                    </div>
+                </>
 
             </div>
         </div>
