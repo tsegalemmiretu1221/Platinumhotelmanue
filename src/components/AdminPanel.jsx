@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { loadMenuData, saveMenuData, resetMenuData, adminLogout, changeAdminPassword, autoTranslate, API_BASE } from '../services/menuService';
+import { loadMenuData, saveMenuData, resetMenuData, adminLogout, changeAdminPassword, autoTranslate } from '../services/menuService';
 import { foodData as defaultFood, drinksData as defaultDrinks, cocktailData as defaultCocktails } from '../data/menuData';
 
 const MENU_TYPES = [
@@ -350,7 +350,8 @@ function ImagePickerField({ value, onChange, placeholder }) {
       const formData = new FormData();
       formData.append('image', file);
       
-      const res = await fetch(`${API_BASE}/upload`, {
+      const { getUploadUrl } = await import('../services/menuService.js');
+      const res = await fetch(getUploadUrl(), {
         method: 'POST',
         body: formData
       });

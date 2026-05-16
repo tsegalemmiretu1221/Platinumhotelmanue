@@ -9,15 +9,15 @@ const PASS_KEY    = 'platinum_admin_pass';
 const DEFAULT_PASS = 'platinum2024';
 
 // ── Menu ─────────────────────────────────────────────────────────────────────
-// Detect if we are in development mode (Vite port) or production
 const isDev = window.location.port === '5173' || window.location.port === '5174' || window.location.port === '5175';
-export const API_BASE = isDev ? `http://${window.location.hostname}:3001/api` : '/api';
+export const getMenuUrl = () => isDev ? `http://${window.location.hostname}:3001/api/menu` : 'api.php?action=menu';
+export const getUploadUrl = () => isDev ? `http://${window.location.hostname}:3001/api/upload` : 'api.php?action=upload';
 
 
 // ── Menu ─────────────────────────────────────────────────────────────────────
 export async function loadMenuData() {
   try {
-    const res = await fetch(`${API_BASE}/menu`);
+    const res = await fetch(getMenuUrl());
     if (res.ok) {
       return await res.json();
     }
@@ -29,7 +29,7 @@ export async function loadMenuData() {
 
 export async function saveMenuData(foodData, drinksData, cocktailData) {
   try {
-    const res = await fetch(`${API_BASE}/menu`, {
+    const res = await fetch(getMenuUrl(), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ foodData, drinksData, cocktailData }),
