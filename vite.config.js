@@ -4,7 +4,8 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => ({
-  base: command === 'build' ? '/Platinumhotelmanue/' : '/',
+  // Use '/' for the custom subdomain root
+  base: '/',
   plugins: [
     react(),
     tailwindcss(),

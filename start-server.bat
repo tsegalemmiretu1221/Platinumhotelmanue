@@ -5,5 +5,5 @@ echo ========================================
 echo   PLATINUM HOTEL Menu Server Starting...
 echo   URL: http://localhost:5173
 echo ========================================
-call npm.cmd run dev
+call npm.cmd run dev:all
 pause
